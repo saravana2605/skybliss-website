@@ -57,7 +57,7 @@ export function ScrollReveal({
   }, [y, delay, duration, start]);
 
   return (
-    <div ref={ref} className={className} style={{ opacity: 0 }}>
+    <div ref={ref} className={className}>
       {children}
     </div>
   );

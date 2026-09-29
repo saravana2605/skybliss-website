@@ -24,25 +24,6 @@ export function zeroPad(n: number, width: number): string {
   return String(n).padStart(width, "0");
 }
 
-/**
- * Build the public src path for a frame in the image sequence.
- * Frames live in public/frames 1/ and are named ezgif-frame-001.jpg … ezgif-frame-300.jpg
- * index is 0-based (0 → frame 001, 299 → frame 300).
- */
-export function frameSrc(index: number): string {
-  // %20 encodes the space in "frames 1" — works in both browsers and Node Image()
-  return `/frames%201/ezgif-frame-${zeroPad(index + 1, 3)}.jpg`;
-}
-
-/** Src builder for the second sequence — public/frames/ (no space), 180 frames */
-export function frameSrc2(index: number): string {
-  return `/frames/ezgif-frame-${zeroPad(index + 1, 3)}.jpg`;
-}
-
-/** Src builder for the third sequence — public/frames 2/ (space → %20), 114 frames */
-export function frameSrc3(index: number): string {
-  return `/frames%202/ezgif-frame-${zeroPad(index + 1, 3)}.jpg`;
-}
 
 /** Check if the user prefers reduced motion */
 export function prefersReducedMotion(): boolean {

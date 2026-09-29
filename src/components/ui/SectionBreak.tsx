@@ -15,7 +15,7 @@ export function SectionBreak({ index, label, heading, sub }: Props) {
   return (
     <div
       ref={ref}
-      className="relative w-full bg-charcoal flex flex-col justify-end px-8 md:px-14 pb-20 md:pb-28 overflow-hidden"
+      className="relative w-full bg-charcoal flex flex-col justify-end px-5 sm:px-8 md:px-14 pb-16 sm:pb-20 md:pb-28 overflow-hidden"
       style={{ height: "100vh" }}
     >
       {/* faint section index watermark */}

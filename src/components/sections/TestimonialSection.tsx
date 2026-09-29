@@ -20,10 +20,10 @@ export function TestimonialSection({ prevReady, onReady }: Props) {
   const barRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement | null>(null);
 
-  // Load Rooftop image for the ambient pinned canvas
+  // Load Skybliss Panoramic Top View image for the ambient pinned canvas
   useEffect(() => {
     const img = new Image();
-    img.src = SKYBLISS_IMAGES.rooftop;
+    img.src = SKYBLISS_IMAGES.skyblissTop;
     img.onload = () => {
       imageRef.current = img;
       syncCanvas();
@@ -50,15 +50,15 @@ export function TestimonialSection({ prevReady, onReady }: Props) {
 
     // Smooth subtle camera drift and zoom
     const baseScale = Math.max(cw / iw, ch / ih);
-    const zoom = 1.05 + 0.12 * p;
+    const zoom = 1.04 + 0.14 * p;
     const finalScale = baseScale * zoom;
 
     const drawW = iw * finalScale;
     const drawH = ih * finalScale;
 
-    // Keep the rooftop seating and skyline centered
+    // Center on the panoramic rooftop seating and Pondicherry city skyline
     const targetX = iw * 0.5 * finalScale;
-    const targetY = ih * 0.45 * finalScale;
+    const targetY = ih * 0.50 * finalScale;
 
     let dx = cw * 0.5 - targetX;
     let dy = ch * 0.5 - targetY - 30 * p;
@@ -118,9 +118,19 @@ export function TestimonialSection({ prevReady, onReady }: Props) {
       className="relative w-full overflow-hidden bg-charcoal"
       style={{ height: "100vh" }}
     >
+      {/* ── Persistent Underlying Rooftop Photograph ── */}
+      <div className="absolute inset-0 z-0">
+        <img
+          src={SKYBLISS_IMAGES.skyblissTop}
+          alt="Skybliss Rooftop Atmosphere"
+          className="absolute inset-0 w-full h-full object-cover object-center"
+          loading="eager"
+        />
+      </div>
+
       <canvas
         ref={canvasRef}
-        className="absolute inset-0 block w-full h-full"
+        className="absolute inset-0 block w-full h-full z-10"
         aria-hidden="true"
       />
 
@@ -141,11 +151,11 @@ export function TestimonialSection({ prevReady, onReady }: Props) {
       />
 
       {/* Top Label */}
-      <div className="absolute top-20 left-8 md:left-14">
+      <div className="absolute top-16 sm:top-20 left-5 sm:left-8 md:left-14">
         <div className="flex items-center gap-2">
           <span className="w-5 h-px bg-gold" />
           <p
-            className="font-sans text-gold text-[10px] uppercase tracking-[0.28em] font-medium"
+            className="font-sans text-gold text-[9px] sm:text-[10px] uppercase tracking-[0.28em] font-medium"
           >
             The Rooftop Atmosphere
           </p>
@@ -154,48 +164,64 @@ export function TestimonialSection({ prevReady, onReady }: Props) {
 
       {/* Subtle quote watermark */}
       <span
-        className="absolute left-8 md:left-14 top-24 font-serif text-white/[0.04] select-none pointer-events-none leading-none"
-        style={{ fontSize: "clamp(8rem, 18vw, 22rem)", lineHeight: 0.8 }}
+        className="absolute left-5 sm:left-8 md:left-14 top-20 sm:top-24 font-serif text-white/[0.04] select-none pointer-events-none leading-none"
+        style={{ fontSize: "clamp(6rem, 18vw, 22rem)", lineHeight: 0.8 }}
         aria-hidden
       >
         “
       </span>
 
       {/* Central Statement */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center px-8 md:px-20 text-center z-10">
-        <motion.p
-          className="font-sans text-gold text-[11px] uppercase tracking-[0.3em] mb-4 font-semibold"
+      <div className="absolute inset-0 flex flex-col items-center justify-center px-5 sm:px-8 md:px-20 text-center z-10">
+        <motion.div
+          className="flex items-center gap-2 mb-3 sm:mb-4"
           initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          Above The City · Beyond The Ordinary
+          <span className="w-5 h-px bg-gold" />
+          <p className="font-sans text-gold text-[10px] sm:text-[11px] uppercase tracking-[0.3em] font-semibold">
+            The Rooftop Experience
+          </p>
+          <span className="w-5 h-px bg-gold" />
+        </motion.div>
+
+        <motion.h2
+          className="font-serif text-white max-w-4xl font-normal"
+          style={{ fontSize: "clamp(2rem, 4.5vw, 4.8rem)", lineHeight: 1.12 }}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.85, delay: 0.1 }}
+        >
+          Above the City.
+          <br />
+          <em className="text-gold not-italic">Beyond Ordinary.</em>
+        </motion.h2>
+
+        <motion.p
+          className="font-sans text-white/80 text-[13px] sm:text-[15px] max-w-xl mt-4 sm:mt-5 leading-relaxed"
+          initial={{ opacity: 0, y: 15 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+        >
+          Open-air dining, panoramic views and an atmosphere designed for evenings that stay with you.
         </motion.p>
 
-        <blockquote
-          className="font-serif text-white max-w-4xl"
-          style={{ fontSize: "clamp(1.7rem, 3.2vw, 3.4rem)", lineHeight: 1.25 }}
-        >
-          “Skybliss brings together open-air dining, panoramic city lights,{" "}
-          <em className="text-gold not-italic">global multi-cuisine,</em> and an electric nightlife
-          energy in one destination.”
-        </blockquote>
+        <div className="mt-5 sm:mt-6 h-px w-16 bg-gold mx-auto" />
 
-        <div className="mt-8 h-px w-16 bg-gold mx-auto" />
-
-        <div className="mt-6 flex flex-col items-center">
-          <p className="font-sans text-white text-[15px] font-medium tracking-wide">
+        <div className="mt-3 sm:mt-4 flex flex-col items-center">
+          <p className="font-sans text-white text-[12px] sm:text-[14px] font-medium tracking-wide">
             Skybliss Rooftop Resto Lounge
           </p>
           <p
-            className="font-sans text-white/50 text-[11px] mt-1 tracking-[0.14em] uppercase"
+            className="font-sans text-white/50 text-[10px] sm:text-[11px] mt-0.5 tracking-[0.14em] uppercase"
           >
             4th Floor, Hotel Aishwarya Grand · Puducherry
           </p>
         </div>
 
         {/* Feature Badges */}
-        <div className="mt-8 flex flex-wrap justify-center gap-3">
+        <div className="mt-5 sm:mt-6 flex flex-wrap justify-center gap-2 sm:gap-3">
           {[
             "Open Rooftop Seating",
             "Panoramic City Views",
@@ -204,11 +230,22 @@ export function TestimonialSection({ prevReady, onReady }: Props) {
           ].map((tag) => (
             <span
               key={tag}
-              className="px-4 py-1.5 rounded-full text-[11px] font-sans text-white/80 glass-dark border border-white/15"
+              className="px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-[11px] font-sans text-white/80 glass-dark border border-white/15"
             >
               {tag}
             </span>
           ))}
+        </div>
+
+        {/* Interactive Experience CTA */}
+        <div className="mt-6 sm:mt-8 flex items-center gap-3">
+          <a
+            href="#experience"
+            className="glass-white flex items-center gap-2.5 px-6 py-2.5 rounded-full font-sans text-xs font-semibold text-charcoal shadow-xl hover:scale-105 transition-transform"
+          >
+            <span>Experience Skybliss</span>
+            <span>↗</span>
+          </a>
         </div>
       </div>
 

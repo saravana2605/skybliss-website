@@ -86,7 +86,7 @@ export function MenuModal({ isOpen, onClose, onOpenReservation }: Props) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
-          className="fixed inset-0 z-50 bg-black/92 backdrop-blur-2xl flex items-center justify-center p-4 sm:p-6"
+          className="fixed inset-0 z-[100] bg-black/92 backdrop-blur-2xl flex items-center justify-center p-4 sm:p-6"
         >
           <motion.div
             initial={{ scale: 0.95, opacity: 0, y: 15 }}
@@ -94,23 +94,24 @@ export function MenuModal({ isOpen, onClose, onOpenReservation }: Props) {
             exit={{ scale: 0.95, opacity: 0, y: 15 }}
             transition={{ duration: 0.25 }}
             onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-4xl bg-[#141412] border border-white/20 rounded-3xl p-6 sm:p-10 shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
+            className="relative w-full max-w-4xl bg-[#141412] border border-white/20 rounded-3xl p-5 sm:p-8 md:p-10 shadow-2xl overflow-hidden max-h-[90vh] max-h-[90dvh] flex flex-col"
           >
             {/* Close Button */}
             <button
               type="button"
               onClick={onClose}
-              className="absolute top-6 right-6 w-9 h-9 rounded-full glass-dark flex items-center justify-center text-white/70 hover:text-white transition-colors"
+              aria-label="Close Menu Modal"
+              className="absolute top-5 sm:top-6 right-5 sm:right-6 w-9 h-9 rounded-full glass-dark flex items-center justify-center text-white/70 hover:text-white transition-colors cursor-pointer z-10"
             >
               ✕
             </button>
 
             {/* Modal Header */}
-            <div className="mb-6 flex-shrink-0">
+            <div className="mb-5 sm:mb-6 pr-8 flex-shrink-0">
               <span className="font-sans text-gold text-[10px] uppercase tracking-[0.24em] font-medium">
                 Skybliss Rooftop Resto Lounge · 4th Floor
               </span>
-              <h3 className="font-serif text-white text-2xl sm:text-4xl mt-1">
+              <h3 className="font-serif text-white text-2xl sm:text-3xl md:text-4xl mt-1">
                 Digital Culinary Collection
               </h3>
               <p className="font-sans text-white/60 text-xs mt-1 leading-relaxed">

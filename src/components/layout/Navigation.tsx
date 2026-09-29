@@ -20,6 +20,17 @@ export function Navigation({ onOpenReservation, onOpenMenu }: NavigationProps) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileOpen]);
+
   const handleNavClick = (label: string, href: string) => {
     setActive(label);
     setMobileOpen(false);
@@ -219,11 +230,11 @@ export function Navigation({ onOpenReservation, onOpenMenu }: NavigationProps) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="fixed inset-0 z-40 bg-black/95 backdrop-blur-2xl md:hidden flex flex-col justify-between p-8 pt-24"
+            className="fixed inset-0 z-40 bg-black/95 backdrop-blur-2xl md:hidden flex flex-col justify-between p-6 sm:p-8 pt-24 pb-8 overflow-y-auto max-h-[100dvh]"
           >
-            <div className="flex flex-col gap-6">
-              <div className="flex items-center gap-3 pb-6 border-b border-white/10">
-                <div className="relative w-12 h-12 rounded-full overflow-hidden border border-gold/40">
+            <div className="flex flex-col gap-5 sm:gap-6">
+              <div className="flex items-center gap-3 pb-5 sm:pb-6 border-b border-white/10">
+                <div className="relative w-11 h-11 sm:w-12 sm:h-12 rounded-full overflow-hidden border border-gold/40 flex-shrink-0">
                   <img
                     src="/images/skybliss/logo.png"
                     alt="Skybliss Logo"
@@ -231,14 +242,14 @@ export function Navigation({ onOpenReservation, onOpenMenu }: NavigationProps) {
                   />
                 </div>
                 <div>
-                  <h3 className="font-serif text-white text-xl tracking-wider">SKYBLISS</h3>
+                  <h3 className="font-serif text-white text-lg sm:text-xl tracking-wider">SKYBLISS</h3>
                   <p className="font-sans text-white/50 text-[10px] tracking-[0.2em] uppercase">
                     Rooftop Resto Lounge
                   </p>
                 </div>
               </div>
 
-              <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-3 sm:gap-4">
                 {NAV_LINKS.map((item, idx) => (
                   <motion.button
                     key={item.label}
@@ -246,20 +257,20 @@ export function Navigation({ onOpenReservation, onOpenMenu }: NavigationProps) {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.05 * idx }}
                     onClick={() => handleNavClick(item.label, item.href)}
-                    className="text-left font-serif text-2xl text-white/90 hover:text-gold transition-colors py-1 flex items-center justify-between"
+                    className="text-left font-serif text-xl sm:text-2xl text-white/90 hover:text-gold transition-colors py-1 flex items-center justify-between cursor-pointer"
                   >
                     <span>{item.label}</span>
-                    <span className="text-sm text-gold/60">0{idx + 1}</span>
+                    <span className="text-xs sm:text-sm text-gold/60">0{idx + 1}</span>
                   </motion.button>
                 ))}
               </div>
             </div>
 
-            <div className="flex flex-col gap-4 pt-6 border-t border-white/10">
+            <div className="flex flex-col gap-3.5 sm:gap-4 pt-5 sm:pt-6 border-t border-white/10 mt-4">
               <button
                 type="button"
                 onClick={handleBooking}
-                className="w-full py-3.5 rounded-full bg-gold text-charcoal font-sans font-semibold text-center text-sm tracking-wide shadow-lg"
+                className="w-full py-3.5 rounded-full bg-gold text-charcoal font-sans font-semibold text-center text-sm tracking-wide shadow-lg cursor-pointer"
               >
                 Book a Table Now
               </button>
@@ -285,7 +296,7 @@ export function Navigation({ onOpenReservation, onOpenMenu }: NavigationProps) {
                 </a>
               </div>
 
-              <p className="font-sans text-white/40 text-[11px] text-center mt-2 leading-relaxed">
+              <p className="font-sans text-white/40 text-[10px] sm:text-[11px] text-center mt-1 sm:mt-2 leading-relaxed">
                 4th Floor, Hotel Aishwarya Grand, Pondicherry
                 <br />
                 Daily 11:00 AM – 11:00 PM

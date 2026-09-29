@@ -27,32 +27,32 @@ export interface StageConfig {
 
 const STAGES: StageConfig[] = [
   {
-    // Stage 1: Hotel Aishwarya Grand building - focus on upper floors / 4th floor rooftop
-    src: SKYBLISS_IMAGES.fullBuilding,
+    // Stage 1: Hotel Aishwarya Grand main building & 4th floor rooftop vantage
+    src: SKYBLISS_IMAGES.fullBuildingMain,
     focusX: 0.5,
-    focusY: 0.22,
-    scaleStart: 1.05,
-    scaleEnd: 1.25,
+    focusY: 0.28,
+    scaleStart: 1.04,
+    scaleEnd: 1.18,
     panX: 0,
-    panY: 30,
+    panY: 20,
   },
   {
-    // Stage 2: Grand illuminated ground entrance & arrival portico
-    src: SKYBLISS_IMAGES.entrance,
+    // Stage 2: Rooftop Dining & Signature Cocktails
+    src: SKYBLISS_IMAGES.dining1,
     focusX: 0.5,
-    focusY: 0.58,
-    scaleStart: 1.0,
+    focusY: 0.45,
+    scaleStart: 1.02,
     scaleEnd: 1.15,
     panX: 0,
-    panY: -20,
+    panY: -15,
   },
   {
-    // Stage 3: Signature open-sky rooftop resto lounge with ambient tables & night sky
-    src: SKYBLISS_IMAGES.rooftop,
+    // Stage 3: Signature Skybliss open-sky panoramic rooftop resto lounge
+    src: SKYBLISS_IMAGES.skyblissTop,
     focusX: 0.5,
-    focusY: 0.42,
+    focusY: 0.45,
     scaleStart: 1.02,
-    scaleEnd: 1.18,
+    scaleEnd: 1.16,
     panX: 0,
     panY: -15,
   },
@@ -64,37 +64,7 @@ export function useSkyblissHeroSequence(
   const imagesRef = useRef<HTMLImageElement[]>([]);
   const [loadProgress, setLoadProgress] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
-  const lastProgressRef = useRef<number>(-1);
-
-  // Preload images
-  useEffect(() => {
-    const loadedImages: HTMLImageElement[] = [];
-    let count = 0;
-    const total = STAGES.length;
-
-    STAGES.forEach((stage, i) => {
-      const img = new Image();
-      img.src = stage.src;
-
-      img.onload = () => {
-        count++;
-        setLoadProgress(count / total);
-        if (count === total) {
-          setIsLoaded(true);
-        }
-      };
-
-      img.onerror = () => {
-        count++;
-        setLoadProgress(count / total);
-        if (count === total) setIsLoaded(true);
-      };
-
-      loadedImages[i] = img;
-    });
-
-    imagesRef.current = loadedImages;
-  }, []);
+  const lastProgressRef = useRef<number>(0);
 
   const drawStage = useCallback(
     (
@@ -106,7 +76,7 @@ export function useSkyblissHeroSequence(
       cw: number,
       ch: number
     ) => {
-      if (!img.complete || img.naturalWidth === 0 || alpha <= 0.005) return;
+      if (!img || !img.complete || img.naturalWidth === 0 || alpha <= 0.005) return false;
 
       ctx.save();
       ctx.globalAlpha = Math.min(1, Math.max(0, alpha));
@@ -116,7 +86,7 @@ export function useSkyblissHeroSequence(
 
       // Base cover scale
       const baseScale = Math.max(cw / iw, ch / ih);
-      const zoom = stage.scaleStart + (stage.scaleEnd - stage.scaleStart) * localT;
+      const zoom = stage.scaleStart + (stage.scaleEnd - stage.scaleStart) * Math.min(1, Math.max(0, localT));
       const finalScale = baseScale * zoom;
 
       const drawW = iw * finalScale;
@@ -141,6 +111,7 @@ export function useSkyblissHeroSequence(
 
       ctx.drawImage(img, dx, dy, drawW, drawH);
       ctx.restore();
+      return true;
     },
     []
   );
@@ -161,46 +132,86 @@ export function useSkyblissHeroSequence(
       const ch = canvas.height;
       if (cw === 0 || ch === 0) return;
 
-      ctx.clearRect(0, 0, cw, ch);
-      ctx.fillStyle = "#0c0c0b";
-      ctx.fillRect(0, 0, cw, ch);
-
       const images = imagesRef.current;
-      if (!images || images.length === 0) return;
 
-      // Stage progression mapping:
-      // Stage 0 (Building): p in [0, 0.45]
-      // Transition 0 -> 1: p in [0.30, 0.50]
-      // Stage 1 (Entrance): p in [0.40, 0.75]
-      // Transition 1 -> 2: p in [0.65, 0.85]
-      // Stage 2 (Rooftop): p in [0.75, 1.0]
+      // Helper to find any available loaded image as fallback
+      const fallbackImg = images.find((im) => im && im.complete && im.naturalWidth > 0);
 
-      if (p <= 0.45) {
-        const localT = p / 0.45;
-        if (images[0]) drawStage(ctx, images[0], STAGES[0], localT, 1, cw, ch);
-      }
+      // Layered Crossfading Architecture:
+      // Base layer is ALWAYS drawn at alpha=1 so no black canvas background ever leaks through.
+      if (p < 0.35) {
+        // Stage 0 alone
+        const localT = p / 0.35;
+        const drawn = images[0] ? drawStage(ctx, images[0], STAGES[0], localT, 1, cw, ch) : false;
+        if (!drawn && fallbackImg) drawStage(ctx, fallbackImg, STAGES[0], localT, 1, cw, ch);
+      } else if (p < 0.48) {
+        // Transition Stage 0 -> Stage 1:
+        // Stage 0 stays at 100% opacity underneath, Stage 1 fades in on top
+        const localT0 = 1;
+        const localT1 = (p - 0.35) / 0.35;
+        const alpha1 = (p - 0.35) / 0.13;
 
-      if (p > 0.30 && p < 0.85) {
-        // Entrance stage
-        let alpha = 1;
-        if (p < 0.48) {
-          alpha = (p - 0.30) / 0.18;
-        } else if (p > 0.68) {
-          alpha = 1 - (p - 0.68) / 0.17;
-        }
-        const localT = (p - 0.30) / 0.55;
-        if (images[1]) drawStage(ctx, images[1], STAGES[1], localT, alpha, cw, ch);
-      }
+        const drawn0 = images[0] ? drawStage(ctx, images[0], STAGES[0], localT0, 1, cw, ch) : false;
+        if (!drawn0 && fallbackImg) drawStage(ctx, fallbackImg, STAGES[0], localT0, 1, cw, ch);
 
-      if (p >= 0.65) {
-        // Rooftop stage
-        const alpha = p < 0.85 ? (p - 0.65) / 0.20 : 1;
-        const localT = (p - 0.65) / 0.35;
-        if (images[2]) drawStage(ctx, images[2], STAGES[2], localT, alpha, cw, ch);
+        if (images[1]) drawStage(ctx, images[1], STAGES[1], localT1, alpha1, cw, ch);
+      } else if (p < 0.68) {
+        // Stage 1 alone
+        const localT = (p - 0.35) / 0.35;
+        const drawn = images[1] ? drawStage(ctx, images[1], STAGES[1], localT, 1, cw, ch) : false;
+        if (!drawn && fallbackImg) drawStage(ctx, fallbackImg, STAGES[1], localT, 1, cw, ch);
+      } else if (p < 0.80) {
+        // Transition Stage 1 -> Stage 2:
+        // Stage 1 stays at 100% opacity underneath, Stage 2 fades in on top
+        const localT1 = 1;
+        const localT2 = (p - 0.68) / 0.32;
+        const alpha2 = (p - 0.68) / 0.12;
+
+        const drawn1 = images[1] ? drawStage(ctx, images[1], STAGES[1], localT1, 1, cw, ch) : false;
+        if (!drawn1 && fallbackImg) drawStage(ctx, fallbackImg, STAGES[1], localT1, 1, cw, ch);
+
+        if (images[2]) drawStage(ctx, images[2], STAGES[2], localT2, alpha2, cw, ch);
+      } else {
+        // Stage 2 alone
+        const localT = (p - 0.68) / 0.32;
+        const drawn = images[2] ? drawStage(ctx, images[2], STAGES[2], localT, 1, cw, ch) : false;
+        if (!drawn && fallbackImg) drawStage(ctx, fallbackImg, STAGES[2], localT, 1, cw, ch);
       }
     },
     [canvasRef, drawStage]
   );
+
+
+  // Preload images and trigger immediate redraws as they finish loading
+  useEffect(() => {
+    const loadedImages: HTMLImageElement[] = [];
+    let count = 0;
+    const total = STAGES.length;
+
+    STAGES.forEach((stage, i) => {
+      const img = new Image();
+      img.src = stage.src;
+
+      img.onload = () => {
+        count++;
+        setLoadProgress(count / total);
+        drawFrame(lastProgressRef.current);
+        if (count === total) {
+          setIsLoaded(true);
+        }
+      };
+
+      img.onerror = () => {
+        count++;
+        setLoadProgress(count / total);
+        if (count === total) setIsLoaded(true);
+      };
+
+      loadedImages[i] = img;
+    });
+
+    imagesRef.current = loadedImages;
+  }, [drawFrame]);
 
   return { loadProgress, isLoaded, drawFrame };
 }

@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
-import { SKYBLISS_IMAGES, AMBIANCE_PILLARS } from "@/lib/constants";
+import { SITE, SKYBLISS_IMAGES, AMBIANCE_PILLARS } from "@/lib/constants";
+import { LocationMapVisual } from "@/components/ui/LocationMapVisual";
 
 export function AboutSection() {
   const ref = useRef<HTMLDivElement>(null);
@@ -10,7 +11,7 @@ export function AboutSection() {
     <section
       ref={ref}
       id="about"
-      className="relative bg-black overflow-hidden py-32 md:py-44 px-8 md:px-14 border-t border-white/[0.08]"
+      className="relative bg-black overflow-hidden py-20 sm:py-32 md:py-44 px-5 sm:px-8 md:px-14 border-t border-white/[0.08]"
     >
       {/* Background Watermark */}
       <span
@@ -35,7 +36,7 @@ export function AboutSection() {
             <p
               className="font-sans text-gold text-[10px] uppercase tracking-[0.28em] font-medium"
             >
-              The Skybliss Concept
+              Dining &amp; Ambience
             </p>
           </motion.div>
 
@@ -46,9 +47,9 @@ export function AboutSection() {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.9, ease: "easeOut", delay: 0.1 }}
           >
-            Above the City.
+            Made for
             <br />
-            <em style={{ color: "#c9a96e" }}>Beyond the Ordinary.</em>
+            <em style={{ color: "#c9a96e" }}>Long Evenings.</em>
           </motion.h2>
 
           <motion.div
@@ -64,9 +65,8 @@ export function AboutSection() {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8, ease: "easeOut", delay: 0.32 }}
           >
-            Skybliss Rooftop Resto Lounge brings together open-air dining, panoramic city
-            views, global flavours, premium beverages, and an energetic nightlife atmosphere in
-            one elevated destination in Pondicherry.
+            Relax into beautifully designed spaces, warm lighting and a dining atmosphere
+            made for conversations, celebrations and memorable evenings.
           </motion.p>
 
           <motion.p
@@ -75,9 +75,8 @@ export function AboutSection() {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8, ease: "easeOut", delay: 0.42 }}
           >
-            Perched on the 4th floor of Hotel Aishwarya Grand on Villianur Main Road, Skybliss
-            offers an open-roof haven where cooling evening breezes meet sizzling culinary
-            creations, signature cocktails, and live sports screenings.
+            Settle into an elegant rooftop setting where beautifully presented food, warm
+            hospitality and panoramic city views come together beneath the open Pondicherry sky.
           </motion.p>
 
           {/* Visual card */}
@@ -88,19 +87,28 @@ export function AboutSection() {
             transition={{ duration: 0.9, delay: 0.48 }}
           >
             <img
-              src={SKYBLISS_IMAGES.rooftop}
+              src={SKYBLISS_IMAGES.dining}
               alt="Skybliss Rooftop Resto Lounge Dining"
               className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
               loading="lazy"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-            <div className="absolute bottom-4 left-5 right-5">
-              <span className="font-sans text-gold text-[9px] uppercase tracking-[0.2em] font-semibold">
-                4th Floor Vantage
-              </span>
-              <p className="font-serif text-white text-lg mt-0.5">
-                Open-Air Dining Beneath The Stars
-              </p>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
+            <div className="absolute bottom-4 left-5 right-5 flex items-end justify-between">
+              <div>
+                <span className="font-sans text-gold text-[9px] uppercase tracking-[0.2em] font-semibold">
+                  The Dining Experience
+                </span>
+                <p className="font-serif text-white text-lg mt-0.5">
+                  Dine Above the City
+                </p>
+              </div>
+              <a
+                href="#menu"
+                className="glass-white px-3.5 py-1.5 rounded-full text-[11px] font-sans font-semibold text-charcoal shadow-lg hover:scale-105 transition-transform inline-flex items-center gap-1"
+              >
+                <span>Explore Dining</span>
+                <span>↗</span>
+              </a>
             </div>
           </motion.div>
         </div>
@@ -131,34 +139,52 @@ export function AboutSection() {
             </motion.div>
           ))}
 
-          {/* Location note badge */}
+          {/* Location note badge with footer map visual */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.7 }}
-            className="glass-dark rounded-2xl p-6 border border-gold/25 mt-4"
+            className="group relative overflow-hidden rounded-2xl border border-gold/30 bg-[#0d0e11] p-4 sm:p-5 transition-all duration-500 hover:border-gold hover:shadow-[0_12px_35px_rgba(201,169,110,0.18)] mt-4"
           >
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center flex-shrink-0 text-gold text-lg">
+            {/* Ambient night glow gradient behind map */}
+            <div className="absolute inset-0 bg-gradient-to-br from-gold/[0.07] via-transparent to-black pointer-events-none" />
+
+            {/* Same map visual as footer */}
+            <a
+              href={SITE.googleMapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="View Hotel Aishwarya Grand on Google Maps"
+              className="block relative overflow-hidden rounded-xl"
+            >
+              <LocationMapVisual mapHeightClass="h-44 sm:h-48" />
+            </a>
+
+            {/* Location Information */}
+            <div className="relative z-10 mt-4 pt-1 flex items-start gap-3.5">
+              <div className="w-10 h-10 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center flex-shrink-0 text-gold text-lg group-hover:bg-gold group-hover:text-black transition-colors duration-300">
                 📍
               </div>
-              <div>
-                <h4 className="font-serif text-white text-base">Hotel Aishwarya Grand</h4>
+              <div className="flex-1 min-w-0">
+                <h4 className="font-serif text-white text-base font-medium group-hover:text-gold transition-colors">
+                  Hotel Aishwarya Grand
+                </h4>
                 <p className="font-sans text-white/60 text-xs mt-1 leading-relaxed">
-                  No.147, Villianur Main Road, Kamban Nagar, Reddiarpalayam, Puducherry - 605010
+                  {SITE.address}
                 </p>
-                <div className="flex items-center gap-4 mt-3">
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-3">
                   <span className="font-sans text-gold text-[11px] font-medium">
                     Daily 11:00 AM – 11:00 PM
                   </span>
                   <span className="text-white/20">·</span>
                   <a
-                    href="https://www.google.com/maps/search/?api=1&query=Hotel+Aishwarya+Grand+Villianur+Main+Road+Reddiarpalayam+Puducherry"
+                    href={SITE.googleMapsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-sans text-white/80 hover:text-white text-[11px] underline underline-offset-4"
+                    className="font-sans text-white/80 hover:text-white text-[11px] underline underline-offset-4 inline-flex items-center gap-1 transition-colors"
                   >
-                    View Map ↗
+                    <span>View Map</span>
+                    <span>↗</span>
                   </a>
                 </div>
               </div>

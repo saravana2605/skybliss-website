@@ -19,12 +19,12 @@ export function Footer({ onOpenReservation, onOpenMenu }: Props) {
   };
 
   return (
-    <footer className="relative bg-black text-white pt-24 pb-12 px-8 md:px-14 border-t border-white/[0.12] overflow-hidden">
+    <footer className="relative bg-black text-white pt-16 sm:pt-24 pb-12 px-5 sm:px-8 md:px-14 border-t border-white/[0.12] overflow-hidden">
       {/* Background Watermark */}
       <span
         className="absolute left-1/2 -translate-x-1/2 bottom-0 font-serif text-white select-none pointer-events-none text-center"
         style={{
-          fontSize: "clamp(5rem, 14vw, 16rem)",
+          fontSize: "clamp(4rem, 14vw, 16rem)",
           opacity: 0.02,
           lineHeight: 0.9,
           whiteSpace: "nowrap",
@@ -119,7 +119,7 @@ export function Footer({ onOpenReservation, onOpenMenu }: Props) {
             </ul>
           </div>
 
-          {/* Visit & Contact (Cols 9-12) */}
+            {/* Visit & Contact (Cols 9-12) */}
           <div className="md:col-span-4 flex flex-col gap-4">
             <p className="font-sans text-gold text-[10px] uppercase tracking-[0.24em] font-medium">
               Visit Us
@@ -129,26 +129,45 @@ export function Footer({ onOpenReservation, onOpenMenu }: Props) {
                 4th Floor, Hotel Aishwarya Grand
               </p>
               <p>
-                No.147, Villianur Main Road, Kamban Nagar,
+                No.147, Villianur Main Rd, Kamban Nagar,
                 <br />
-                Reddiarpalayam, Puducherry - 605010
+                Reddiarpalayam, Puducherry, 605010
               </p>
               <p className="pt-2 text-white/90">
-                <span className="text-gold font-medium">Opening Hours:</span> 11:00 AM – 11:00 PM Daily
+                <span className="text-gold font-medium">Opening Hours:</span> {SITE.hours}
               </p>
-              <p className="text-white/90">
-                <span className="text-gold font-medium">Phone:</span>{" "}
-                <a href={`tel:${SITE.phones[0].raw}`} className="hover:text-gold">
-                  {SITE.phones[0].display}
-                </a>{" "}
-                /{" "}
-                <a href={`tel:${SITE.phones[1].raw}`} className="hover:text-gold">
-                  {SITE.phones[1].display}
+              <p className="text-white/90 flex flex-wrap items-center gap-1.5">
+                <span className="text-gold font-medium">Call:</span>
+                <a
+                  href={`tel:${SITE.phoneRaw}`}
+                  className="hover:text-gold transition-colors font-medium text-white"
+                >
+                  {SITE.phone}
+                </a>
+              </p>
+              <p className="text-white/90 flex flex-wrap items-center gap-1.5">
+                <span className="text-gold font-medium">WhatsApp:</span>
+                <a
+                  href={buildWhatsAppEnquiryUrl()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#25D366] hover:underline transition-colors"
+                >
+                  {SITE.whatsappDisplay}
+                </a>
+              </p>
+              <p className="text-white/90 flex flex-wrap items-center gap-1.5">
+                <span className="text-gold font-medium">Email:</span>
+                <a
+                  href={SITE.emailUrl}
+                  className="hover:text-gold transition-colors"
+                >
+                  {SITE.email}
                 </a>
               </p>
             </div>
 
-            <div className="pt-3">
+            <div className="pt-2">
               <a
                 href={SITE.googleMapsUrl}
                 target="_blank"
@@ -162,10 +181,30 @@ export function Footer({ onOpenReservation, onOpenMenu }: Props) {
           </div>
         </div>
 
+        {/* Built by CloudMaSa Branding */}
+        <div className="pt-10 pb-8 border-b border-white/[0.08] flex flex-col items-center justify-center text-center gap-3">
+          <p className="font-sans text-white/50 text-[11px] sm:text-xs uppercase tracking-[0.24em] font-medium">
+            Built by
+          </p>
+          <a
+            href="https://cloudmasa.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Visit CloudMaSa"
+            className="group inline-flex items-center justify-center p-2 rounded-2xl transition-all duration-300 hover:scale-105"
+          >
+            <img
+              src="/images/skybliss/cloudmasa-logo.png"
+              alt="CloudMaSa"
+              className="h-10 sm:h-12 md:h-14 w-auto object-contain brightness-100 contrast-105 group-hover:brightness-110 transition-all drop-shadow-lg"
+            />
+          </a>
+        </div>
+
         {/* Bottom copyright */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-white/40 font-sans gap-4">
+        <div className="pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-white/40 font-sans gap-4 text-center sm:text-left">
           <p>© Skybliss Rooftop Resto Lounge. All rights reserved.</p>
-          <p>Hotel Aishwarya Grand · 4th Floor · Puducherry - 605010</p>
+          <p>Hotel Aishwarya Grand · 4th Floor · Puducherry, 605010</p>
         </div>
       </div>
     </footer>

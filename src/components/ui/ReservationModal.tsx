@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { buildWhatsAppReservationUrl } from "@/lib/constants";
+import { SITE, buildWhatsAppReservationUrl } from "@/lib/constants";
 import {
   cleanPhoneNumber,
   isValidIndianPhone,
@@ -80,7 +80,7 @@ export function ReservationModal({ isOpen, onClose }: Props) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={handleClose}
-          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-xl flex items-center justify-center p-4 sm:p-6"
+          className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-xl flex items-center justify-center p-4 sm:p-6"
         >
           <motion.div
             initial={{ scale: 0.95, opacity: 0, y: 15 }}
@@ -88,37 +88,38 @@ export function ReservationModal({ isOpen, onClose }: Props) {
             exit={{ scale: 0.95, opacity: 0, y: 15 }}
             transition={{ duration: 0.25 }}
             onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-lg bg-[#141412] border border-white/20 rounded-3xl p-6 sm:p-8 shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto"
+            className="relative w-full max-w-lg bg-[#141412] border border-white/20 rounded-3xl p-5 sm:p-8 shadow-2xl overflow-hidden max-h-[90vh] max-h-[90dvh] overflow-y-auto"
           >
             {/* Close Button */}
             <button
               type="button"
               onClick={handleClose}
-              className="absolute top-6 right-6 w-9 h-9 rounded-full glass-dark flex items-center justify-center text-white/70 hover:text-white transition-colors"
+              aria-label="Close Reservation Modal"
+              className="absolute top-5 sm:top-6 right-5 sm:right-6 w-9 h-9 rounded-full glass-dark flex items-center justify-center text-white/70 hover:text-white transition-colors cursor-pointer z-20"
             >
               ✕
             </button>
 
-            <div className="mb-6">
+            <div className="mb-5 sm:mb-6 pr-8">
               <span className="font-sans text-gold text-[10px] uppercase tracking-[0.24em] font-medium">
                 Skybliss Rooftop Resto Lounge
               </span>
               <h3 className="font-serif text-white text-2xl sm:text-3xl mt-1">
                 Book a Table
               </h3>
-              <p className="font-sans text-white/60 text-xs mt-1.5 leading-relaxed">
+              <p className="font-sans text-white/60 text-xs mt-1 leading-relaxed">
                 4th Floor, Hotel Aishwarya Grand · Daily 11:00 AM – 11:00 PM
               </p>
             </div>
 
             {submitted ? (
-              <div className="flex flex-col items-center justify-center text-center py-8">
+              <div className="flex flex-col items-center justify-center text-center py-6 sm:py-8">
                 <div className="w-14 h-14 rounded-full bg-gold/15 border border-gold/40 flex items-center justify-center text-gold text-2xl mb-4">
                   ✓
                 </div>
-                <h4 className="font-serif text-white text-2xl mb-2">Request Ready</h4>
+                <h4 className="font-serif text-white text-xl sm:text-2xl mb-2">Request Ready</h4>
                 <p className="font-sans text-white/70 text-xs max-w-sm leading-relaxed mb-6">
-                  Your reservation request has been prepared for WhatsApp (+91 82200 58152).
+                  Your reservation request has been prepared for WhatsApp ({SITE.whatsappDisplay}).
                   Click below if the chat didn't open.
                 </p>
 
@@ -126,7 +127,7 @@ export function ReservationModal({ isOpen, onClose }: Props) {
                   href={generatedUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full py-3.5 rounded-full bg-[#25D366] text-black font-sans font-semibold text-sm shadow-xl flex items-center justify-center gap-2 hover:brightness-105 transition-all"
+                  className="w-full py-3.5 rounded-full bg-[#25D366] text-black font-sans font-semibold text-sm shadow-xl flex items-center justify-center gap-2 hover:brightness-105 transition-all cursor-pointer"
                 >
                   <span>Open WhatsApp Booking</span>
                   ↗
@@ -135,7 +136,7 @@ export function ReservationModal({ isOpen, onClose }: Props) {
                 <button
                   type="button"
                   onClick={handleClose}
-                  className="mt-5 text-xs text-white/50 hover:text-white underline underline-offset-4"
+                  className="mt-5 text-xs text-white/50 hover:text-white underline underline-offset-4 cursor-pointer"
                 >
                   Close &amp; Return to Website
                 </button>
@@ -206,6 +207,7 @@ export function ReservationModal({ isOpen, onClose }: Props) {
                     <input
                       id="modal-date"
                       type="date"
+                      min={new Date().toISOString().split("T")[0]}
                       value={formData.date}
                       onChange={(e) => updateField("date", e.target.value)}
                       className={`bg-transparent border-b py-2 text-white font-sans text-xs outline-none transition-colors [color-scheme:dark] ${

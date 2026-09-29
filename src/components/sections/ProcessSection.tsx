@@ -14,11 +14,11 @@ export function ProcessSection({ onOpenReservation }: Props) {
     <section
       ref={ref}
       id="events"
-      className="relative bg-black py-28 md:py-40 px-8 md:px-14 overflow-hidden border-t border-white/[0.08]"
+      className="relative bg-black py-20 sm:py-28 md:py-40 px-5 sm:px-8 md:px-14 overflow-hidden border-t border-white/[0.08]"
     >
       <div className="max-w-screen-xl mx-auto">
         {/* ── Header ──────────────────────────────────────────────────── */}
-        <div className="mb-16 md:mb-20 max-w-2xl">
+        <div className="mb-14 md:mb-20 max-w-2xl">
           <motion.div
             className="flex items-center gap-3 mb-6"
             initial={{ opacity: 0, y: 12 }}
@@ -29,7 +29,7 @@ export function ProcessSection({ onOpenReservation }: Props) {
             <p
               className="font-sans text-gold text-[10px] uppercase tracking-[0.28em] font-medium"
             >
-              Events &amp; Nightlife
+              Nights At Skybliss
             </p>
           </motion.div>
 
@@ -40,20 +40,20 @@ export function ProcessSection({ onOpenReservation }: Props) {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.85, delay: 0.1 }}
           >
-            Where the Night
+            Good Food. Great Drinks.
             <br />
-            <em style={{ color: "#c9a96e" }}>Comes Alive.</em>
+            <em style={{ color: "#c9a96e" }}>Better Vibes.</em>
           </motion.h2>
 
           <motion.p
-            className="font-sans text-white/70 text-[14px] leading-relaxed mt-5"
+            className="font-sans text-white/75 text-[14px] leading-relaxed mt-5"
             initial={{ opacity: 0 }}
             animate={inView ? { opacity: 1 } : {}}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            From high-stakes cricket and football tournament screenings on large screens to
-            soulful acoustic performances, vibrant DJ sets, and private milestones under the
-            stars.
+            Enjoy lively evenings with music, drinks, rooftop views and an atmosphere made for friends,
+            celebrations and late-night conversations. From live music and DJ nights to match screenings
+            and group gatherings, Skybliss brings energy to every evening.
           </motion.p>
         </div>
 
@@ -62,7 +62,7 @@ export function ProcessSection({ onOpenReservation }: Props) {
           {EVENTS_HIGHLIGHTS.map((s, i) => (
             <motion.div
               key={s.num}
-              className="border-b border-r border-white/[0.14] p-8 md:p-10 group hover:bg-white/[0.04] transition-colors duration-300 flex flex-col justify-between"
+              className="border-b border-r border-white/[0.14] p-6 sm:p-8 md:p-10 group hover:bg-white/[0.04] transition-colors duration-300 flex flex-col justify-between"
               initial={{ opacity: 0, y: 28 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{
@@ -103,7 +103,7 @@ export function ProcessSection({ onOpenReservation }: Props) {
                   <button
                     type="button"
                     onClick={onOpenReservation}
-                    className="font-sans text-[11px] text-gold/80 hover:text-white transition-colors uppercase tracking-wider inline-flex items-center gap-1.5"
+                    className="font-sans text-[11px] text-gold/80 hover:text-white transition-colors uppercase tracking-wider inline-flex items-center gap-1.5 cursor-pointer"
                   >
                     <span>Reserve For {s.title}</span>
                     <span>↗</span>
@@ -113,6 +113,51 @@ export function ProcessSection({ onOpenReservation }: Props) {
             </motion.div>
           ))}
         </div>
+
+        {/* ── Cinematic Feature Banner: Live & Celebrate ── */}
+        <motion.div
+          className="relative mt-12 sm:mt-16 rounded-3xl overflow-hidden border border-white/15 h-64 sm:h-80 md:h-96 group"
+          initial={{ opacity: 0, y: 24 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8, delay: 0.4 }}
+        >
+          <img
+            src="/images/skybliss/rooftop.png"
+            alt="Live & Celebrate at Skybliss Rooftop"
+            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+            loading="lazy"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/60 to-transparent" />
+          <div className="absolute inset-0 p-6 sm:p-10 md:p-14 flex flex-col justify-between max-w-xl">
+            <div className="flex items-center gap-2">
+              <span className="w-5 h-px bg-gold" />
+              <p className="font-sans text-gold text-[10px] uppercase tracking-[0.26em] font-medium">
+                Live &amp; Celebrate
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-serif text-white text-2xl sm:text-3xl md:text-4xl font-normal leading-tight">
+                Make the Evening Yours.
+              </h3>
+              <p className="font-sans text-white/75 text-xs sm:text-sm mt-3 leading-relaxed max-w-md">
+                From live music and DJ nights to celebrations and group gatherings, Skybliss brings
+                unmatched energy and skyline views to every evening in Pondicherry.
+              </p>
+
+              {onOpenReservation && (
+                <button
+                  type="button"
+                  onClick={onOpenReservation}
+                  className="mt-5 sm:mt-6 glass-white inline-flex items-center gap-2.5 px-6 py-2.5 rounded-full font-sans text-xs font-semibold text-charcoal shadow-xl hover:scale-105 transition-transform cursor-pointer"
+                >
+                  <span>Plan Your Celebration</span>
+                  <span>↗</span>
+                </button>
+              )}
+            </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   );
