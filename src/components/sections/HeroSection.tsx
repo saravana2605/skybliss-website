@@ -23,6 +23,8 @@ export function HeroSection({ onReady, onOpenReservation, onOpenMenu }: HeroProp
   const [activeStage, setActiveStage] = useState(0);
 
   const { loadProgress, isLoaded, drawFrame } = useSkyblissHeroSequence(canvasRef);
+  const drawFrameRef = useRef(drawFrame);
+  drawFrameRef.current = drawFrame;
 
   // Resize canvas to match screen dimensions
   const syncCanvas = useCallback(() => {
@@ -30,8 +32,8 @@ export function HeroSection({ onReady, onOpenReservation, onOpenMenu }: HeroProp
     if (!c) return;
     c.width = window.innerWidth;
     c.height = window.innerHeight;
-    drawFrame(progressRef.current);
-  }, [drawFrame]);
+    drawFrameRef.current(progressRef.current);
+  }, []);
 
   useEffect(() => {
     syncCanvas();
@@ -41,7 +43,6 @@ export function HeroSection({ onReady, onOpenReservation, onOpenMenu }: HeroProp
 
   // ScrollTrigger pinned canvas animation with responsive storytelling
   useEffect(() => {
-    if (!preloaderDone) return;
     const container = containerRef.current;
     if (!container) return;
 
@@ -68,7 +69,7 @@ export function HeroSection({ onReady, onOpenReservation, onOpenMenu }: HeroProp
           progressRef.current = p;
 
           // Draw the synchronized image stage on canvas
-          drawFrame(p);
+          drawFrameRef.current(p);
 
           // Update thin bottom progress bar
           const bar = document.getElementById("hero-progress");
@@ -79,16 +80,16 @@ export function HeroSection({ onReady, onOpenReservation, onOpenMenu }: HeroProp
           // Stage 1 (02/03): p in [0.36, 0.71)
           // Stage 2 (03/03): p in [0.71, 1.0]
           const stageIdx = p < 0.36 ? 0 : p < 0.71 ? 1 : 2;
-          setActiveStage(stageIdx);
+          setActiveStage((prev) => (prev !== stageIdx ? stageIdx : prev));
         },
       });
+      ScrollTrigger.sort();
+      ScrollTrigger.refresh();
+      onReady?.();
     }, container);
 
-    ScrollTrigger.refresh();
-    onReady?.();
-
     return () => ctx.revert();
-  }, [preloaderDone, drawFrame, onReady]);
+  }, [onReady]);
 
   // Entrance animation once preloader finishes
   useEffect(() => {
@@ -130,6 +131,12 @@ export function HeroSection({ onReady, onOpenReservation, onOpenMenu }: HeroProp
     }
   };
 
+  const heroImages = [
+    SKYBLISS_IMAGES.fullBuildingMain,
+    SKYBLISS_IMAGES.dining1,
+    SKYBLISS_IMAGES.skyblissTop,
+  ];
+
   return (
     <>
       {!preloaderDone && (
@@ -145,15 +152,27 @@ export function HeroSection({ onReady, onOpenReservation, onOpenMenu }: HeroProp
         id="hero"
         className="relative w-full overflow-hidden bg-charcoal h-screen select-none"
       >
-        {/* ── Persistent Underlying Hero Image (Guarantees zero black screen at all times) ── */}
-        <div className="absolute inset-0 z-0">
-          <img
-            src={SKYBLISS_IMAGES.fullBuildingMain}
-            alt="Skybliss Rooftop Resto Lounge — Hotel Aishwarya Grand"
-            className="absolute inset-0 w-full h-full object-cover object-center"
-            loading="eager"
-            fetchPriority="high"
-          />
+        {/* ── Persistent Multi-Stage Photography (Guarantees zero black screen at all times) ── */}
+        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+          {heroImages.map((src, idx) => {
+            const isActive = activeStage === idx;
+            return (
+              <img
+                key={src}
+                src={src}
+                alt="Skybliss Rooftop Resto Lounge — Hotel Aishwarya Grand"
+                className="absolute inset-0 w-full h-full object-cover object-center"
+                style={{
+                  opacity: isActive ? 1 : 0,
+                  transform: isActive ? "scale(1.04)" : "scale(1)",
+                  transition: "opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1)",
+                  zIndex: isActive ? 2 : 1,
+                }}
+                loading="eager"
+                fetchPriority={idx === 0 ? "high" : "auto"}
+              />
+            );
+          })}
         </div>
 
         {/* ── Desktop & Interactive Canvas Engine ── */}
@@ -163,6 +182,7 @@ export function HeroSection({ onReady, onOpenReservation, onOpenMenu }: HeroProp
           role="img"
           aria-label="Skybliss Rooftop Resto Lounge — Cinematic scroll experience"
         />
+
 
         {/* Cinematic Dark Vignettes for Crisp Typographic Legibility */}
         <div

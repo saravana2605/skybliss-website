@@ -10,11 +10,17 @@ const getScrollDistance = () =>
   window.innerHeight * (window.innerWidth < 768 ? 3.5 : 4.5);
 
 interface Props {
-  prevReady: boolean;
   onOpenReservation?: () => void;
 }
 
-export function ScrollSection({ prevReady, onOpenReservation }: Props) {
+const SEQUENCE_URLS = [
+  SKYBLISS_IMAGES.fullBuildingMain, // Chapter 0: Twilight Ascent
+  SKYBLISS_IMAGES.dining1,          // Chapter 1: Dine Above the City
+  SKYBLISS_IMAGES.reception,        // Chapter 2: A Warm Welcome Awaits
+  SKYBLISS_IMAGES.room2,            // Chapter 3: Stay in Comfort
+];
+
+export function ScrollSection({ onOpenReservation }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef(0);
@@ -35,8 +41,6 @@ export function ScrollSection({ prevReady, onOpenReservation }: Props) {
     if (cw === 0 || ch === 0) return;
 
     ctx.clearRect(0, 0, cw, ch);
-    ctx.fillStyle = "#0c0c0b";
-    ctx.fillRect(0, 0, cw, ch);
 
     const images = imagesRef.current;
     if (images.length === 0) return;
@@ -46,19 +50,21 @@ export function ScrollSection({ prevReady, onOpenReservation }: Props) {
 
     // Helper to draw image with smooth camera drift, zoom and crossfade
     const drawImg = (
-      img: HTMLImageElement,
+      img: HTMLImageElement | undefined,
       alpha: number,
       scaleStart: number,
       scaleEnd: number,
       localT: number,
       focusY: number
     ) => {
-      if (!img || !img.complete || img.naturalWidth === 0 || alpha <= 0.005) return false;
+      const targetImg = (img && img.complete && img.naturalWidth > 0) ? img : fallbackImg;
+      if (!targetImg || !targetImg.complete || targetImg.naturalWidth === 0 || alpha <= 0.005) return false;
+
       ctx.save();
       ctx.globalAlpha = Math.min(1, Math.max(0, alpha));
 
-      const iw = img.naturalWidth;
-      const ih = img.naturalHeight;
+      const iw = targetImg.naturalWidth;
+      const ih = targetImg.naturalHeight;
       const baseScale = Math.max(cw / iw, ch / ih);
       const clampedT = Math.min(1, Math.max(0, localT));
       const zoom = scaleStart + (scaleEnd - scaleStart) * clampedT;
@@ -76,101 +82,86 @@ export function ScrollSection({ prevReady, onOpenReservation }: Props) {
       dx = Math.min(0, Math.max(cw - drawW, dx));
       dy = Math.min(0, Math.max(ch - drawH, dy));
 
-      ctx.drawImage(img, dx, dy, drawW, drawH);
+      ctx.drawImage(targetImg, dx, dy, drawW, drawH);
       ctx.restore();
       return true;
     };
 
     // Layered Crossfade Strategy:
     // Base layer is ALWAYS drawn at alpha=1, incoming layer fades in on top
-    if (p < 0.20) {
-      // Chapter 1 (Full Building Twilight)
-      const localT = p / 0.20;
-      const drawn = images[0] ? drawImg(images[0], 1, 1.04, 1.16, localT, 0.30) : false;
-      if (!drawn && fallbackImg) drawImg(fallbackImg, 1, 1.04, 1.16, localT, 0.30);
-    } else if (p < 0.28) {
-      // Transition Chapter 1 -> Chapter 2 (Dining 1)
+    if (p < 0.22) {
+      // Chapter 0 (Full Building Twilight)
+      const localT = p / 0.22;
+      drawImg(images[0], 1, 1.04, 1.16, localT, 0.30);
+    } else if (p < 0.32) {
+      // Transition Chapter 0 -> Chapter 1 (Dining 1)
       const localT0 = 1;
-      const localT1 = (p - 0.20) / 0.24;
-      const alpha1 = (p - 0.20) / 0.08;
+      const localT1 = (p - 0.22) / 0.26;
+      const alpha1 = (p - 0.22) / 0.10;
 
-      const drawn0 = images[0] ? drawImg(images[0], 1, 1.16, 1.16, localT0, 0.30) : false;
-      if (!drawn0 && fallbackImg) drawImg(fallbackImg, 1, 1.16, 1.16, localT0, 0.30);
-
-      if (images[1]) drawImg(images[1], alpha1, 1.02, 1.14, localT1, 0.45);
-    } else if (p < 0.44) {
-      // Chapter 2 (Dining 1 & Ambiance)
-      const localT = (p - 0.20) / 0.24;
-      const drawn = images[1] ? drawImg(images[1], 1, 1.02, 1.14, localT, 0.45) : false;
-      if (!drawn && fallbackImg) drawImg(fallbackImg, 1, 1.02, 1.14, localT, 0.45);
-    } else if (p < 0.54) {
-      // Transition Chapter 2 -> Chapter 3 (Reception)
+      drawImg(images[0], 1, 1.16, 1.16, localT0, 0.30);
+      drawImg(images[1], alpha1, 1.02, 1.14, localT1, 0.45);
+    } else if (p < 0.48) {
+      // Chapter 1 (Dining 1 & Ambiance)
+      const localT = (p - 0.22) / 0.26;
+      drawImg(images[1], 1, 1.02, 1.14, localT, 0.45);
+    } else if (p < 0.58) {
+      // Transition Chapter 1 -> Chapter 2 (Reception)
       const localT1 = 1;
-      const localT3 = (p - 0.44) / 0.24;
-      const alpha3 = (p - 0.44) / 0.10;
+      const localT2 = (p - 0.48) / 0.24;
+      const alpha2 = (p - 0.48) / 0.10;
 
-      const drawn1 = images[1] ? drawImg(images[1], 1, 1.14, 1.14, localT1, 0.45) : false;
-      if (!drawn1 && fallbackImg) drawImg(fallbackImg, 1, 1.14, 1.14, localT1, 0.45);
+      drawImg(images[1], 1, 1.14, 1.14, localT1, 0.45);
+      drawImg(images[2], alpha2, 1.02, 1.15, localT2, 0.48);
+    } else if (p < 0.72) {
+      // Chapter 2 (Grand Reception)
+      const localT = (p - 0.48) / 0.24;
+      drawImg(images[2], 1, 1.02, 1.15, localT, 0.48);
+    } else if (p < 0.82) {
+      // Transition Chapter 2 -> Chapter 3 (Room 2 Suite)
+      const localT2 = 1;
+      const localT3 = (p - 0.72) / 0.28;
+      const alpha3 = (p - 0.72) / 0.10;
 
-      if (images[3]) drawImg(images[3], alpha3, 1.02, 1.15, localT3, 0.48);
-    } else if (p < 0.68) {
-      // Chapter 3 (Grand Reception)
-      const localT = (p - 0.44) / 0.24;
-      const drawn = images[3] ? drawImg(images[3], 1, 1.02, 1.15, localT, 0.48) : false;
-      if (!drawn && fallbackImg) drawImg(fallbackImg, 1, 1.02, 1.15, localT, 0.48);
-    } else if (p < 0.78) {
-      // Transition Chapter 3 -> Chapter 4 (Room 2 Suite)
-      const localT3 = 1;
-      const localT4 = (p - 0.68) / 0.32;
-      const alpha4 = (p - 0.68) / 0.10;
-
-      const drawn3 = images[3] ? drawImg(images[3], 1, 1.15, 1.15, localT3, 0.48) : false;
-      if (!drawn3 && fallbackImg) drawImg(fallbackImg, 1, 1.15, 1.15, localT3, 0.48);
-
-      if (images[4]) drawImg(images[4], alpha4, 1.00, 1.14, localT4, 0.50);
+      drawImg(images[2], 1, 1.15, 1.15, localT2, 0.48);
+      drawImg(images[3], alpha3, 1.00, 1.14, localT3, 0.50);
     } else {
-      // Chapter 4 (Executive Suite)
-      const localT = (p - 0.68) / 0.32;
-      const drawn = images[4] ? drawImg(images[4], 1, 1.00, 1.14, localT, 0.50) : false;
-      if (!drawn && fallbackImg) drawImg(fallbackImg, 1, 1.00, 1.14, localT, 0.50);
+      // Chapter 3 (Executive Suite)
+      const localT = (p - 0.72) / 0.28;
+      drawImg(images[3], 1, 1.00, 1.14, localT, 0.50);
     }
   }, []);
+
+  const drawChapterRef = useRef(drawChapter);
+  drawChapterRef.current = drawChapter;
 
   const syncCanvas = useCallback(() => {
     const c = canvasRef.current;
     if (!c) return;
     c.width = window.innerWidth;
     c.height = window.innerHeight;
-    drawChapter(progressRef.current);
-  }, [drawChapter]);
+    drawChapterRef.current(progressRef.current);
+  }, []);
 
-  // Preload chapter images
+  // Preload chapter images and keep cached
   useEffect(() => {
-    const sequenceUrls = [
-      SKYBLISS_IMAGES.fullBuildingMain,
-      SKYBLISS_IMAGES.dining1,
-      SKYBLISS_IMAGES.dining,
-      SKYBLISS_IMAGES.reception,
-      SKYBLISS_IMAGES.room2,
-    ];
     const loaded: HTMLImageElement[] = [];
-    let count = 0;
-    sequenceUrls.forEach((src) => {
+    SEQUENCE_URLS.forEach((src, idx) => {
       const img = new Image();
       img.src = src;
-      img.onload = () => {
-        count++;
-        if (count === sequenceUrls.length) {
+      if (img.complete && img.naturalWidth > 0) {
+        loaded[idx] = img;
+        syncCanvas();
+      } else {
+        img.onload = () => {
+          loaded[idx] = img;
           syncCanvas();
-          ScrollTrigger.refresh();
-        } else if (count === 1) {
-          syncCanvas();
-        }
-      };
-      img.onerror = () => {
-        count++;
-      };
-      loaded.push(img);
+        };
+        img.onerror = () => {
+          loaded[idx] = img;
+        };
+      }
+      loaded[idx] = img;
     });
     imagesRef.current = loaded;
   }, [syncCanvas]);
@@ -182,7 +173,6 @@ export function ScrollSection({ prevReady, onOpenReservation }: Props) {
   }, [syncCanvas]);
 
   useEffect(() => {
-    if (!prevReady) return;
     const container = containerRef.current;
     if (!container) return;
 
@@ -198,7 +188,7 @@ export function ScrollSection({ prevReady, onOpenReservation }: Props) {
         onUpdate(self) {
           const p = self.progress;
           progressRef.current = p;
-          drawChapter(p);
+          drawChapterRef.current(p);
 
           if (barRef.current) barRef.current.style.transform = `scaleX(${p})`;
 
@@ -207,15 +197,16 @@ export function ScrollSection({ prevReady, onOpenReservation }: Props) {
           );
 
           if (ci !== -1) {
-            setActiveChapIndex(ci);
+            setActiveChapIndex((prev) => (prev !== ci ? ci : prev));
           }
         },
       });
+      ScrollTrigger.sort();
       ScrollTrigger.refresh();
     }, container);
 
     return () => ctx.revert();
-  }, [prevReady, drawChapter]);
+  }, []);
 
   const currentChapter = EXPERIENCE_CHAPTERS[activeChapIndex] || EXPERIENCE_CHAPTERS[0];
 
@@ -236,14 +227,26 @@ export function ScrollSection({ prevReady, onOpenReservation }: Props) {
       className="relative w-full overflow-hidden bg-charcoal select-none"
       style={{ height: "100vh" }}
     >
-      {/* ── Persistent Underlying Photograph (Prevents any black screen flash) ── */}
-      <div className="absolute inset-0 z-0">
-        <img
-          src={SKYBLISS_IMAGES.fullBuildingMain}
-          alt="Skybliss Experience"
-          className="absolute inset-0 w-full h-full object-cover object-center"
-          loading="eager"
-        />
+      {/* ── Persistent Multi-Chapter Real Photographs (Prevents any black screen flash) ── */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        {EXPERIENCE_CHAPTERS.map((chap, idx) => {
+          const isActive = activeChapIndex === idx;
+          return (
+            <img
+              key={chap.label}
+              src={chap.image}
+              alt={chap.title.replace("\n", " ")}
+              className="absolute inset-0 w-full h-full object-cover object-center"
+              style={{
+                opacity: isActive ? 1 : 0,
+                transform: isActive ? "scale(1.04)" : "scale(1)",
+                transition: "opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1)",
+                zIndex: isActive ? 2 : 1,
+              }}
+              loading="eager"
+            />
+          );
+        })}
       </div>
 
       <canvas
@@ -273,13 +276,13 @@ export function ScrollSection({ prevReady, onOpenReservation }: Props) {
       ══════════════════════════════════════════════════════════════════════ */}
       {/* Top-Left Section Eyebrow */}
       <div className="absolute top-16 sm:top-20 left-5 sm:left-8 md:left-14 z-20">
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="popLayout">
           <motion.div
             key={`chap-eyebrow-${activeChapIndex}`}
-            initial={{ opacity: 0, y: -8 }}
+            initial={{ opacity: 0, y: -6 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 8 }}
-            transition={{ duration: 0.4 }}
+            exit={{ opacity: 0, y: 6 }}
+            transition={{ duration: 0.3 }}
             className="flex items-center gap-2"
           >
             <span className="w-5 h-px bg-gold" />
@@ -291,14 +294,14 @@ export function ScrollSection({ prevReady, onOpenReservation }: Props) {
       </div>
 
       {/* Top-Right Chapter Counter */}
-      <div className="absolute top-16 sm:top-20 right-5 sm:right-8 md:right-14 text-right z-20">
-        <AnimatePresence mode="wait">
+      <div className="absolute top-16 sm:top-20 right-5 sm:right-8 md:left-auto md:right-14 text-right z-20">
+        <AnimatePresence mode="popLayout">
           <motion.div
             key={`chap-counter-${activeChapIndex}`}
             initial={{ opacity: 0, y: -6 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 6 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.25 }}
             className="flex items-baseline justify-end gap-1"
           >
             <span className="font-sans text-gold font-bold text-sm sm:text-base tabular-nums tracking-[0.2em]">
@@ -313,13 +316,13 @@ export function ScrollSection({ prevReady, onOpenReservation }: Props) {
           BOTTOM-LEFT EDITORIAL STORYTELLING CONTENT
       ══════════════════════════════════════════════════════════════════════ */}
       <div className="absolute bottom-16 sm:bottom-24 md:bottom-28 left-5 sm:left-8 md:left-14 right-5 sm:right-auto max-w-xl z-20">
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="popLayout">
           <motion.div
             key={`chap-body-${activeChapIndex}`}
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -14 }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.35, ease: "easeOut" }}
           >
             <p className="font-sans text-gold text-[10px] sm:text-[11px] mb-2 uppercase tracking-[0.22em] font-medium">
               {currentChapter.sub}
@@ -381,21 +384,21 @@ export function ScrollSection({ prevReady, onOpenReservation }: Props) {
         className="hidden md:flex absolute right-8 md:right-14 flex-col gap-3.5 z-20 pointer-events-none"
         style={{ top: "50%", transform: "translateY(-50%)" }}
       >
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="popLayout">
           <motion.div
             key={`chap-stats-stack-${activeChapIndex}`}
-            initial={{ opacity: 0, x: 20 }}
+            initial={{ opacity: 0, x: 16 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -16 }}
-            transition={{ duration: 0.45 }}
+            exit={{ opacity: 0, x: -12 }}
+            transition={{ duration: 0.35 }}
             className="flex flex-col gap-3"
           >
             {currentChapter.stats.map((c, i) => (
               <motion.div
                 key={`${activeChapIndex}-${c.n}-${i}`}
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.08, duration: 0.4 }}
+                transition={{ delay: i * 0.05, duration: 0.3 }}
                 className="glass-light rounded-2xl px-5 py-3.5 min-w-[155px] border border-white/20 backdrop-blur-md shadow-xl"
               >
                 <p className="font-serif text-white text-2xl font-semibold leading-none">{c.n}</p>
@@ -411,21 +414,22 @@ export function ScrollSection({ prevReady, onOpenReservation }: Props) {
         </AnimatePresence>
       </div>
 
-      {/* Bottom Thin Progress Bar */}
-      <div
-        className="absolute bottom-0 left-0 right-0 h-px z-30"
-        style={{ background: "rgba(255,255,255,0.1)" }}
-      >
+        {/* Bottom Thin Progress Bar */}
         <div
-          ref={barRef}
-          className="h-full origin-left"
-          style={{
-            background: "linear-gradient(to right, #a8854f, #c9a96e, #f5e4be)",
-            transform: "scaleX(0)",
-            transition: "none",
-          }}
-        />
+          className="absolute bottom-0 left-0 right-0 h-px z-30"
+          style={{ background: "rgba(255,255,255,0.1)" }}
+        >
+          <div
+            ref={barRef}
+            className="h-full origin-left"
+            style={{
+              background: "linear-gradient(to right, #a8854f, #c9a96e, #f5e4be)",
+              transform: "scaleX(0)",
+              transition: "none",
+            }}
+          />
+        </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
+

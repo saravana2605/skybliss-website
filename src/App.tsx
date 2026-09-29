@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useLenis } from "@/hooks/useLenis";
 import { GrainOverlay } from "@/components/ui/GrainOverlay";
 import { Navigation } from "@/components/layout/Navigation";
@@ -12,46 +12,43 @@ import { ProcessSection } from "@/components/sections/ProcessSection";
 import { GallerySection } from "@/components/sections/GallerySection";
 import { ContactSection } from "@/components/sections/ContactSection";
 import { Footer } from "@/components/layout/Footer";
+import { FloatingCallButton } from "@/components/ui/FloatingCallButton";
 import { ReservationModal } from "@/components/ui/ReservationModal";
 import { MenuModal } from "@/components/ui/MenuModal";
 
 export function App() {
   useLenis();
 
-  // Each pinned section must be initialized AFTER the previous pin's spacer is registered in the DOM
-  const [heroReady, setHeroReady] = useState(false);
-  const [testimonialReady, setTestimonialReady] = useState(false);
-
   // Global modals
   const [reservationOpen, setReservationOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const handleOpenReservation = useCallback(() => setReservationOpen(true), []);
+  const handleCloseReservation = useCallback(() => setReservationOpen(false), []);
+  const handleOpenMenu = useCallback(() => setMenuOpen(true), []);
+  const handleCloseMenu = useCallback(() => setMenuOpen(false), []);
 
   return (
     <>
       <GrainOverlay />
       <Navigation
-        onOpenReservation={() => setReservationOpen(true)}
-        onOpenMenu={() => setMenuOpen(true)}
+        onOpenReservation={handleOpenReservation}
+        onOpenMenu={handleOpenMenu}
       />
 
       <main className="relative bg-charcoal">
         {/* ── PINNED 1: Hero Section (4th floor rooftop & arrival cinematic journey) ── */}
         <HeroSection
-          onReady={() => setHeroReady(true)}
-          onOpenReservation={() => setReservationOpen(true)}
-          onOpenMenu={() => setMenuOpen(true)}
+          onOpenReservation={handleOpenReservation}
+          onOpenMenu={handleOpenMenu}
         />
 
         {/* ── PINNED 2: Rooftop Ambiance & Atmosphere Storytelling ── */}
-        <TestimonialSection
-          prevReady={heroReady}
-          onReady={() => setTestimonialReady(true)}
-        />
+        <TestimonialSection />
 
         {/* ── PINNED 3: The Skybliss Experience Chapters (Ascent, Dining, Nightlife) ── */}
         <ScrollSection
-          prevReady={testimonialReady}
-          onOpenReservation={() => setReservationOpen(true)}
+          onOpenReservation={handleOpenReservation}
         />
 
         {/* ── Normal Flow Sections ── */}
@@ -63,12 +60,12 @@ export function App() {
 
         {/* Cuisine & Bar Collection */}
         <ProjectsSection
-          onOpenMenu={() => setMenuOpen(true)}
-          onOpenReservation={() => setReservationOpen(true)}
+          onOpenMenu={handleOpenMenu}
+          onOpenReservation={handleOpenReservation}
         />
 
         {/* Events, Live Music & Match-Day Screenings */}
-        <ProcessSection onOpenReservation={() => setReservationOpen(true)} />
+        <ProcessSection onOpenReservation={handleOpenReservation} />
 
         {/* Editorial Skybliss Photography Gallery */}
         <GallerySection />
@@ -78,22 +75,26 @@ export function App() {
       </main>
 
       <Footer
-        onOpenReservation={() => setReservationOpen(true)}
-        onOpenMenu={() => setMenuOpen(true)}
+        onOpenReservation={handleOpenReservation}
+        onOpenMenu={handleOpenMenu}
       />
+
+      {/* Floating Call Action */}
+      <FloatingCallButton />
 
       {/* Global Interactive Modals */}
       <ReservationModal
         isOpen={reservationOpen}
-        onClose={() => setReservationOpen(false)}
+        onClose={handleCloseReservation}
       />
       <MenuModal
         isOpen={menuOpen}
-        onClose={() => setMenuOpen(false)}
-        onOpenReservation={() => setReservationOpen(true)}
+        onClose={handleCloseMenu}
+        onOpenReservation={handleOpenReservation}
       />
     </>
   );
 }
 
 export default App;
+

@@ -9,27 +9,15 @@ gsap.registerPlugin(ScrollTrigger);
 const getScrollDistance = () => window.innerHeight * (window.innerWidth < 768 ? 0.6 : 0.85);
 
 interface Props {
-  prevReady: boolean;
   onReady?: () => void;
 }
 
-export function TestimonialSection({ prevReady, onReady }: Props) {
+export function TestimonialSection({ onReady }: Props = {}) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const progressRef = useRef(0);
   const barRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement | null>(null);
-
-  // Load Skybliss Panoramic Top View image for the ambient pinned canvas
-  useEffect(() => {
-    const img = new Image();
-    img.src = SKYBLISS_IMAGES.skyblissTop;
-    img.onload = () => {
-      imageRef.current = img;
-      syncCanvas();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const drawAmbiance = useCallback((p: number) => {
     const canvas = canvasRef.current;
@@ -69,13 +57,31 @@ export function TestimonialSection({ prevReady, onReady }: Props) {
     ctx.drawImage(img, dx, dy, drawW, drawH);
   }, []);
 
+  const drawAmbianceRef = useRef(drawAmbiance);
+  drawAmbianceRef.current = drawAmbiance;
+
   const syncCanvas = useCallback(() => {
     const c = canvasRef.current;
     if (!c) return;
     c.width = window.innerWidth;
     c.height = window.innerHeight;
-    drawAmbiance(progressRef.current);
-  }, [drawAmbiance]);
+    drawAmbianceRef.current(progressRef.current);
+  }, []);
+
+  // Load Skybliss Panoramic Top View image for the ambient pinned canvas
+  useEffect(() => {
+    const img = new Image();
+    img.src = SKYBLISS_IMAGES.skyblissTop;
+    if (img.complete && img.naturalWidth > 0) {
+      imageRef.current = img;
+      syncCanvas();
+    } else {
+      img.onload = () => {
+        imageRef.current = img;
+        syncCanvas();
+      };
+    }
+  }, [syncCanvas]);
 
   useEffect(() => {
     syncCanvas();
@@ -84,7 +90,6 @@ export function TestimonialSection({ prevReady, onReady }: Props) {
   }, [syncCanvas]);
 
   useEffect(() => {
-    if (!prevReady) return;
     const container = containerRef.current;
     if (!container) return;
 
@@ -100,16 +105,17 @@ export function TestimonialSection({ prevReady, onReady }: Props) {
         onUpdate(self) {
           const p = self.progress;
           progressRef.current = p;
-          drawAmbiance(p);
+          drawAmbianceRef.current(p);
           if (barRef.current) barRef.current.style.transform = `scaleX(${p})`;
         },
       });
+      ScrollTrigger.sort();
       ScrollTrigger.refresh();
       onReady?.();
     }, container);
 
     return () => ctx.revert();
-  }, [prevReady, drawAmbiance, onReady]);
+  }, [onReady]);
 
   return (
     <div

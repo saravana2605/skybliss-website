@@ -182,7 +182,7 @@ export function Footer({ onOpenReservation, onOpenMenu }: Props) {
         </div>
 
         {/* Built by CloudMaSa Branding */}
-        <div className="pt-10 pb-8 border-b border-white/[0.08] flex flex-col items-center justify-center text-center gap-3">
+        <div className="pt-12 pb-10 border-b border-white/[0.08] flex flex-col items-center justify-center text-center gap-3.5">
           <p className="font-sans text-white/50 text-[11px] sm:text-xs uppercase tracking-[0.24em] font-medium">
             Built by
           </p>
@@ -196,7 +196,7 @@ export function Footer({ onOpenReservation, onOpenMenu }: Props) {
             <img
               src="/images/skybliss/cloudmasa-logo.png"
               alt="CloudMaSa"
-              className="h-10 sm:h-12 md:h-14 w-auto object-contain brightness-100 contrast-105 group-hover:brightness-110 transition-all drop-shadow-lg"
+              className="h-14 sm:h-16 md:h-20 max-w-[85vw] sm:max-w-[340px] md:max-w-[420px] w-auto object-contain brightness-100 contrast-105 group-hover:brightness-110 transition-all drop-shadow-xl"
             />
           </a>
         </div>
