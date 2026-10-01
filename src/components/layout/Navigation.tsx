@@ -299,7 +299,7 @@ export function Navigation({ onOpenReservation, onOpenMenu }: NavigationProps) {
               <p className="font-sans text-white/40 text-[10px] sm:text-[11px] text-center mt-1 sm:mt-2 leading-relaxed">
                 4th Floor, Hotel Aishwarya Grand, Pondicherry
                 <br />
-                Daily 11:00 AM – 11:00 PM
+                Daily 11:00 AM – 12:00 AM
               </p>
             </div>
           </motion.div>

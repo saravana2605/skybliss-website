@@ -108,7 +108,7 @@ export function ReservationModal({ isOpen, onClose }: Props) {
                 Book a Table
               </h3>
               <p className="font-sans text-white/60 text-xs mt-1 leading-relaxed">
-                4th Floor, Hotel Aishwarya Grand · Daily 11:00 AM – 11:00 PM
+                4th Floor, Hotel Aishwarya Grand · Daily 11:00 AM – 12:00 AM
               </p>
             </div>
 

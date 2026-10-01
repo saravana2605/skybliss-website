@@ -16,7 +16,7 @@ export const SITE = {
   whatsappDisplay: "+91 98436 14081",
   email: "skyblissresto@gmail.com",
   emailUrl: "mailto:skyblissresto@gmail.com",
-  hours: "11:00 AM – 11:00 PM Daily",
+  hours: "11:00 AM – 12:00 AM Daily",
   instagramHandle: "@skybliss2024",
   instagramUrl: "https://www.instagram.com/skybliss2024/",
   googleMapsUrl: "https://www.google.com/maps/search/?api=1&query=Hotel+Aishwarya+Grand+Villianur+Main+Road+Reddiarpalayam+Puducherry+605010",
@@ -50,7 +50,7 @@ export const HERO_STAGES: HeroStage[] = [
     stats: [
       { value: "4th Fl.", label: "Hotel Aishwarya\nGrand" },
       { value: "100%", label: "Open-Air\nSkyline" },
-      { value: "11–11", label: "Daily Service\n11 AM – 11 PM" },
+      { value: "11–12", label: "Daily Service\n11 AM – 12 AM" },
     ],
   },
   {
@@ -169,7 +169,7 @@ export const EXPERIENCE_CHAPTERS: ExperienceChapter[] = [
     stats: [
       { n: "4th Fl.", label: "Hotel Aishwarya\nGrand" },
       { n: "100%", label: "Open-Air\nSkyline" },
-      { n: "11–11", label: "Daily Service\n11 AM – 11 PM" },
+      { n: "11–12", label: "Daily Service\n11 AM – 12 AM" },
     ],
   },
   {
@@ -639,7 +639,7 @@ export const STATS = [
   { value: 4, suffix: "th", label: "Floor Rooftop Vantage", decimals: 0 },
   { value: 6, suffix: "+", label: "Global Cuisines & Bar", decimals: 0 },
   { value: 100, suffix: "%", label: "Open-Air Skyline", decimals: 0 },
-  { value: 12, suffix: "h", label: "Daily Service 11am–11pm", decimals: 0 },
+  { value: 13, suffix: "h", label: "Daily Service 11am–12am", decimals: 0 },
 ];
 
 // ─── WhatsApp & Communication Helpers ──────────────────────────────────────

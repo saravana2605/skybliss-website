@@ -278,7 +278,7 @@ export function TestimonialSection({ onReady }: Props = {}) {
                 { text: "Match Screenings On Big Screen", accent: true },
                 { text: "Group Dining & Celebrations", accent: false },
                 { text: "Crafted Cocktails & Bar Bites", accent: false },
-                { text: "Open Daily 11 AM – 11 PM", accent: true },
+                { text: "Open Daily 11 AM – 12 AM", accent: true },
               ].map((item, j) => (
                 <span key={`${copy}-${j}`} className="flex items-center">
                   <span

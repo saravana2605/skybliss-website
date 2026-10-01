@@ -495,7 +495,7 @@ export function HeroSection({ onReady, onOpenReservation, onOpenMenu }: HeroProp
             </div>
 
             <div className="flex items-center justify-between text-[10px] text-white/50 font-sans pt-1 border-t border-white/10 mt-0.5">
-              <span>Daily 11 AM – 11 PM</span>
+              <span>Daily 11 AM – 12 AM</span>
               <a href={`tel:${SITE.phoneRaw}`} className="hover:text-gold transition-colors">
                 {SITE.phone}
               </a>
@@ -529,7 +529,7 @@ export function HeroSection({ onReady, onOpenReservation, onOpenMenu }: HeroProp
                   { text: "4th Floor Hotel Aishwarya Grand", accent: false },
                   { text: "Puducherry's Premier Rooftop", accent: false },
                   { text: "Pre-Book Your Table", accent: true },
-                  { text: "Daily 11:00 AM – 11:00 PM", accent: false },
+                  { text: "Daily 11:00 AM – 12:00 AM", accent: false },
                 ].map((item, j) => (
                   <span key={`${copy}-${j}`} className="flex items-center">
                     <span

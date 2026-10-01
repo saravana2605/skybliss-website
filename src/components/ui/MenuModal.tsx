@@ -115,7 +115,7 @@ export function MenuModal({ isOpen, onClose, onOpenReservation }: Props) {
                 Digital Culinary Collection
               </h3>
               <p className="font-sans text-white/60 text-xs mt-1 leading-relaxed">
-                Global multi-cuisine selections &amp; handcrafted spirits served daily 11:00 AM – 11:00 PM.
+                Global multi-cuisine selections &amp; handcrafted spirits served daily 11:00 AM – 12:00 AM.
               </p>
             </div>
 

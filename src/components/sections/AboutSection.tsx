@@ -174,7 +174,7 @@ export function AboutSection() {
                 </p>
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-3">
                   <span className="font-sans text-gold text-[11px] font-medium">
-                    Daily 11:00 AM – 11:00 PM
+                    Daily 11:00 AM – 12:00 AM
                   </span>
                   <span className="text-white/20">·</span>
                   <a
